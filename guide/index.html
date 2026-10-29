@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnyCompany를 위한 Quick Desktop 실습</title>
+<link rel="icon" href="assets/quick-favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  :root {
+    --ink: #16161d;
+    --sub: #55566a;
+    --line: #e7e5f0;
+    --bg: #faf9fd;
+    --card: #ffffff;
+    --violet: #6d3ae0;
+    --magenta: #c21fb3;
+    --grad: linear-gradient(120deg, #6d3ae0 0%, #a12bd0 55%, #e0368f 100%);
+    --soft: #f3effd;
+    --code-bg: #17151f;
+    --code-ink: #ece9f7;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body {
+    margin: 0;
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--violet); }
+
+  /* 상단 내비게이션 */
+  .nav {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(250, 249, 253, .86);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1080px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; gap: 24px; height: 60px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: -.02em; white-space: nowrap; }
+  .brand img { width: 22px; height: 22px; border-radius: 5px; }
+  .brand span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .nav ul::-webkit-scrollbar { display: none; }
+  .nav li a {
+    display: block; padding: 6px 12px; border-radius: 999px;
+    font-size: 14px; color: var(--sub); text-decoration: none; white-space: nowrap;
+  }
+  .nav li a:hover, .nav li a.active { background: var(--soft); color: var(--violet); }
+
+  /* 히어로 */
+  .hero {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(900px 500px at 85% 10%, rgba(224, 54, 143, .16), transparent 60%),
+      radial-gradient(800px 600px at 10% 90%, rgba(109, 58, 224, .18), transparent 60%),
+      #fbfaff;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-inner {
+    max-width: 1080px; margin: 0 auto; padding: 72px 24px 80px;
+    display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center;
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: var(--violet);
+    background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+  }
+  .eyebrow img { width: 18px; height: 18px; border-radius: 4px; }
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 54px); line-height: 1.1; word-break: keep-all; letter-spacing: -.035em;
+    margin: 20px 0 16px; font-weight: 800;
+  }
+  .hero h1 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero h1 small { display: block; font-size: .42em; letter-spacing: -.02em; color: var(--sub); font-weight: 700; margin-bottom: 10px; }
+  .hero .lead { font-size: 19px; color: var(--sub); margin: 0 0 28px; }
+  .hero .lead strong { color: var(--ink); }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .meta div {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 16px; font-size: 14px; color: var(--sub);
+  }
+  .meta b { display: block; color: var(--ink); font-size: 15px; }
+  .hero-visual { position: relative; }
+  .hero-visual img {
+    width: 100%; display: block; border-radius: 28px;
+    box-shadow: 0 30px 80px -20px rgba(80, 40, 160, .35);
+  }
+  .hero-visual .tag {
+    position: absolute; left: -18px; bottom: 28px;
+    background: #fff; border-radius: 14px; padding: 12px 16px;
+    box-shadow: 0 12px 30px -10px rgba(40, 20, 90, .3);
+    font-size: 14px; font-weight: 600;
+  }
+  .hero-visual .tag small { display: block; font-weight: 500; color: var(--sub); font-size: 12px; }
+
+  /* 본문 공통 */
+  main { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+  section { padding-top: 72px; }
+  .sec-label { font-size: 13px; font-weight: 700; color: var(--magenta); letter-spacing: .04em; margin: 0 0 6px; }
+  h2 { font-size: 30px; letter-spacing: -.025em; margin: 0 0 12px; line-height: 1.3; }
+  h3 { font-size: 18px; margin: 28px 0 10px; letter-spacing: -.01em; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--sub); }
+
+  /* 실습 카드 */
+  .lab {
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+    padding: 36px; margin-top: 24px;
+    display: grid; grid-template-columns: 1fr 340px; gap: 36px;
+  }
+  .lab.single { grid-template-columns: 1fr; }
+  .lab-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .lab-no {
+    flex: none; width: 40px; height: 40px; border-radius: 12px;
+    background: var(--grad); color: #fff; font-weight: 800; font-size: 18px;
+    display: grid; place-items: center;
+  }
+  .lab-head h2 { margin: 0; font-size: 24px; }
+  .point {
+    display: inline-block; background: var(--soft); color: #4a2aa8;
+    border-radius: 10px; padding: 8px 14px; font-size: 15px; margin: 6px 0 4px;
+  }
+  .lab-side img {
+    width: 100%; display: block; border-radius: 16px; border: 1px solid var(--line);
+  }
+  .lab-side figcaption { font-size: 13px; color: var(--sub); margin-top: 8px; }
+
+  /* 프롬프트 복사 블록 */
+  .prompt {
+    position: relative; margin: 12px 0 8px;
+    background: var(--code-bg); color: var(--code-ink);
+    border-radius: 14px; overflow: hidden;
+  }
+  .prompt-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px 10px 18px; border-bottom: 1px solid rgba(255, 255, 255, .08);
+    font-size: 12px; color: #a9a4c2; letter-spacing: .02em;
+  }
+  .prompt pre {
+    margin: 0; padding: 18px; white-space: pre-wrap; word-break: break-word;
+    font-family: "Pretendard Variable", Pretendard, sans-serif; font-size: 16px; line-height: 1.7;
+  }
+  .prompt.code pre {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6;
+    word-break: break-all; max-height: 360px; overflow: auto;
+  }
+  .copy {
+    appearance: none; border: 0; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fff; color: var(--ink); font: inherit; font-size: 13px; font-weight: 600;
+    padding: 6px 12px; border-radius: 8px; transition: transform .1s, background .2s;
+  }
+  .copy:hover { background: #efeafd; }
+  .copy:active { transform: scale(.97); }
+  .copy.done { background: #2fbf71; color: #fff; }
+
+  .inline-copy {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--soft); border: 1px solid #ddd3fa; border-radius: 8px;
+    padding: 1px 4px 1px 10px; font-size: 15px; color: #3d2394; vertical-align: baseline;
+  }
+  .inline-copy button {
+    appearance: none; border: 0; cursor: pointer; background: #fff; border-radius: 6px;
+    padding: 2px 8px; font: inherit; font-size: 12px; font-weight: 600; color: var(--violet);
+  }
+  .inline-copy button.done { background: #2fbf71; color: #fff; }
+
+  .note {
+    margin: 8px 0 0; font-size: 14px; color: #8a4b00;
+    background: #fff6e6; border: 1px solid #f5dfb5; border-radius: 10px; padding: 10px 14px;
+  }
+
+  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 8px 0 0; }
+  ol.steps li {
+    counter-increment: s; position: relative; padding: 8px 0 8px 40px; border-bottom: 1px dashed var(--line);
+  }
+  ol.steps li:last-child { border-bottom: 0; }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: 9px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--soft); color: var(--violet); font-weight: 700; font-size: 13px;
+    display: grid; place-items: center;
+  }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* 설정 경로 */
+  .path { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 4px; }
+  .path span {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; font-size: 14px; font-weight: 600;
+  }
+  .path i { font-style: normal; color: #b3aecb; }
+
+  .arch { font-size: 14px; color: var(--sub); margin: 8px 0 0; }
+  .free-h3 { color: #fff; font-size: 18px; margin: 26px 0 6px; }
+  .free .guide-video { border-color: rgba(255,255,255,.3); }
+  .guide-video { width: 100%; display: block; margin-top: 14px; border-radius: 14px; border: 1px solid var(--line); background: #000; }
+  .live-link {
+    display: flex; align-items: center; gap: 14px; margin-top: 24px; padding: 16px 20px;
+    border-radius: 14px; background: var(--grad); color: #fff; text-decoration: none;
+  }
+  .live-link b { font-size: 16px; white-space: nowrap; }
+  .live-link span { font-size: 14px; opacity: .9; }
+
+  /* 자유 실습 */
+  .free {
+    background: var(--grad); color: #fff; border-radius: 22px; padding: 40px; margin-top: 24px;
+  }
+  .free h2 { color: #fff; }
+  .free p { color: rgba(255, 255, 255, .9); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 18px; }
+  .chips span {
+    background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: 999px; padding: 8px 16px; font-size: 15px; font-weight: 500;
+  }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px);
+    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 10px; font-size: 14px;
+    opacity: 0; pointer-events: none; transition: all .25s;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 880px) {
+    .hero-inner, .lab, .two { grid-template-columns: 1fr; }
+    .live-link { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .hero-inner { padding: 48px 20px 56px; gap: 36px; }
+    .hero-visual .tag { left: 12px; }
+    .lab { padding: 24px; }
+    .brand { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand"><img src="assets/company-logo.png" alt="">AnyCompany · <span>Quick Desktop</span> 실습</div>
+    <ul>
+      <li><a href="#lab1">실습 1</a></li>
+      <li><a href="#lab2">실습 2</a></li>
+      <li><a href="#lab3">실습 3</a></li>
+      <li><a href="#free">자유 실습</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow"><img src="assets/company-logo.png" alt="">AnyCompany 핸즈온</span>
+      <h1><small>AnyCompany를 위한</small><em>Quick Desktop</em> 실습</h1>
+      <p class="lead"><strong>Amazon Quick Desktop</strong>으로 업무를 자동화해 보는 실습입니다. 공통 실습 3개를 따라한 뒤, 각자 준비한 업무 아이디어를 직접 만들어 봅니다.</p>
+      <div class="meta">
+        <div><b>공통 실습 3개</b>스케줄 · PPT · MCP</div>
+        <div><b>자유 실습</b>내 업무 자동화</div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="assets/hero.jpg" alt="노트북 위에 떠 있는 Amazon Quick 채팅 입력창">
+      <div class="tag">채팅 한 문장으로 시작<small>별도 설치 없이 Quick Desktop에서 바로 실습</small></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 공통 실습 1 -->
+  <section id="lab1">
+    <p class="sec-label">공통 실습 1</p>
+    <div class="lab">
+      <div>
+        <div class="lab-head"><div class="lab-no">1</div><h2>업계 뉴스 아침 브리핑</h2></div>
+        <div class="point"><b>핵심</b>: 매일 정해진 시간에 뉴스를 찾아 Activity Feed에 올려 주는 스케줄 만들기</div>
+        <h3>아래 문구를 채팅창에 붙여넣으세요</h3>
+        <div class="prompt">
+          <div class="prompt-bar"><span>PROMPT</span><button class="copy" data-target="p1">복사</button></div>
+          <pre id="p1">매일 아침 9시에 어제 나온 AI·IT 업계 주요 뉴스 3개를 한 줄씩 요약하고 링크를 붙여 Activity Feed에 띄워줘.</pre>
+        </div>
+        <h3>실습 흐름</h3>
+        <ol class="steps">
+          <li>위 문구를 Quick Desktop 채팅창에 붙여넣기</li>
+          <li>Quick이 만든 스케줄(시간, 할 일)을 확인하고 저장</li>
+          <li>바로 결과를 보려면 <span class="inline-copy"><span id="p1b">지금 한 번 실행해줘</span><button data-target="p1b">복사</button></span> 입력</li>
+          <li>Activity Feed에 올라온 뉴스 3개와 링크 확인</li>
+        </ol>
+      </div>
+      <figure class="lab-side" style="margin:0">
+        <img src="assets/activity-feed.jpg" alt="Amazon Quick Activity Feed 화면">
+        <figcaption>스케줄 결과는 Activity Feed에 올라옵니다.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 공통 실습 2 -->
+  <section id="lab2">
+    <p class="sec-label">공통 실습 2</p>
+    <div class="lab single">
+      <div>
+        <div class="lab-head"><div class="lab-no">2</div><h2>외식 프랜차이즈 광고 트렌드 PPT</h2></div>
+        <div class="point"><b>핵심</b>: 웹에서 찾은 업계 소식을 수정 가능한 차트가 들어간 PPT로 만들기</div>
+        <h3>아래 문구를 채팅창에 붙여넣으세요</h3>
+        <div class="prompt">
+          <div class="prompt-bar"><span>PROMPT</span><button class="copy" data-target="p2">복사</button></div>
+          <pre id="p2">최근 한 달 외식 프랜차이즈(버거, 치킨, 커피, 피자)의 신규 프로모션, 광고 캠페인, 신메뉴 출시 소식을 웹에서 10건 이상 찾아서 광고 트렌드 PPT 만들어줘.
+찾은 소식을 기준으로 프로모션 유형 비중, 업종별 소식 수, 광고 채널 비중, 소식이 많은 브랜드 상위 5곳을 차트로 만들어서 수정가능한 형태로 ppt에 넣어줘.
+주요 사례 3개는 한 장씩 출처 링크와 함께 정리하고, 마지막 장에는 광고주에게 제안할 광고 포인트를 요약해줘. 한국어로 말해줘.</pre>
+        </div>
+        <h3>실습 흐름</h3>
+        <ol class="steps">
+          <li>위 문구를 Quick Desktop 채팅창에 붙여넣기</li>
+          <li>Quick이 슬라이드 플랜 제시 → <b>Approve</b> 클릭</li>
+          <li>실시간으로 PPT가 만들어지는 과정 확인 (Session Tab에서 미리보기)</li>
+          <li>완성된 PPT를 열어 차트 4장과 사례 슬라이드 확인 (차트는 PowerPoint에서 바로 수정할 수 있습니다)</li>
+        </ol>
+        <h3>만들어지는 과정</h3>
+        <video class="guide-video" src="assets/quick-ppt-generate.mp4" poster="assets/quick-ppt-generate-poster.jpg" controls muted playsinline preload="metadata"></video>
+        <h3>완성된 PPT</h3>
+        <video class="guide-video" src="assets/quick-ppt-results.mp4" poster="assets/quick-ppt-results-poster.jpg" controls muted playsinline preload="metadata"></video>
+      </div>
+    </div>
+  </section>
+
+  <!-- 공통 실습 3 -->
+  <section id="lab3">
+    <p class="sec-label">공통 실습 3</p>
+    <div class="lab single">
+      <div>
+        <div class="lab-head"><div class="lab-no">3</div><h2>회의실 예약 MCP 연결</h2></div>
+        <div class="point"><b>핵심</b>: AWS에 만든 회의실 MCP 서버를 Quick Desktop에 연결해 채팅으로 회의실 예약하기</div>
+        <p class="arch">AgentCore Gateway → Lambda → DynamoDB · 도구: 회의실 목록, 예약 현황, 예약, 취소, 내 일정</p>
+
+        <h3>1. 아래 MCP 설정 복사</h3>
+        <div class="prompt code">
+          <div class="prompt-bar"><span>meeting-room-mcp.json</span><button class="copy" data-target="p3">복사</button></div>
+          <pre id="p3">{
+  "mcpServers": {
+    "meeting-room": {
+      "type": "http",
+      "url": "{{MCP_URL}}",
+      "headers": { "Authorization": "Bearer {{ACCESS_TOKEN}}" }
+    }
+  }
+}</pre>
+        </div>
+        <p class="note">토큰이 들어 있는 설정입니다. 24시간 동안 쓸 수 있습니다.</p>
+
+        <h3>2. Quick Desktop에 붙여넣기</h3>
+        <div class="path">
+          <span>⚙️ Settings › Capabilities</span><i>›</i>
+          <span>+ Create › MCP server</span><i>›</i>
+          <span>Connection type: Remote</span><i>›</i>
+          <span>Paste JSON에 붙여넣기</span><i>›</i>
+          <span>Add MCP</span>
+        </div>
+        <video class="guide-video" src="assets/mcp-connect-guide.mp4" poster="assets/mcp-connect-guide-poster.jpg" controls muted playsinline preload="metadata"></video>
+
+        <h3>3. 채팅으로 써 보기</h3>
+        <div class="two">
+          <div class="prompt">
+            <div class="prompt-bar"><span>PROMPT A</span><button class="copy" data-target="p4">복사</button></div>
+            <pre id="p4">오늘 오후 3시에 4층 대회의실 1시간 예약해줘. 예약자는 내 이름, 제목은 주간 회의로 해줘</pre>
+          </div>
+          <div class="prompt">
+            <div class="prompt-bar"><span>PROMPT B</span><button class="copy" data-target="p5">복사</button></div>
+            <pre id="p5">내일 오전에 8명이 쓸 수 있고 화상회의 되는 회의실 중 비어 있는 곳 알려줘</pre>
+          </div>
+        </div>
+
+        <a class="live-link" href="{{ROOMS_PAGE_URL}}" target="_blank" rel="noopener">
+          <b>회의실 현황 화면 열기 ↗</b>
+          <span>예약하면 해당 회의실이 바로 "사용 중"으로 바뀌는 것을 볼 수 있습니다</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 자유 실습 -->
+  <section id="free">
+    <div class="free">
+      <p class="sec-label" style="color:#ffd6f0">FREE TIME</p>
+      <h2>🏃 자유 실습 시간</h2>
+      <p>각자 준비해 온 업무 자동화 아이디어를 Quick Desktop으로 직접 구현해 보세요. 아래 기능을 조합해서 쓸 수 있습니다.</p>
+      <div class="chips">
+        <span>스케줄 (정기 자동화)</span>
+        <span>PPT / 워드 / 엑셀 문서 생성</span>
+        <span>데이터 분석 &amp; 시각화</span>
+        <span>이메일 자동화</span>
+        <span>MCP 커넥터 연동</span>
+        <span>에이전트 빌더 (커스텀 AI 에이전트)</span>
+        <span>웹 검색 &amp; 요약</span>
+      </div>
+      <h3 class="free-h3">Gmail · Google Sheets 같은 웹 커넥터 연결하기</h3>
+      <p>Settings › Capabilities › <b>Browse more</b>에서 서비스를 고르고 <b>Connect</b> → 계정 로그인 → 권한 허용</p>
+      <video class="guide-video" src="assets/quick-connector-create.mp4" poster="assets/quick-connector-create-poster.jpg" controls muted playsinline preload="metadata"></video>
+      <p style="margin:18px 0 0">막히면 언제든 손 들어주세요 🙋</p>
+    </div>
+  </section>
+
+
+</main>
+
+<div class="toast" id="toast">클립보드에 복사했습니다</div>
+
+<script>
+  const toast = document.getElementById('toast');
+  let timer;
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      // file:// 등 클립보드 API를 못 쓰는 환경용 대체 경로
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+  }
+
+  document.querySelectorAll('button[data-target]').forEach(btn => {
+    const label = btn.textContent;
+    btn.addEventListener('click', async () => {
+      await copyText(document.getElementById(btn.dataset.target).textContent);
+      btn.textContent = '복사됨 ✓';
+      btn.classList.add('done');
+      toast.classList.add('show');
+      clearTimeout(timer);
+      timer = setTimeout(() => toast.classList.remove('show'), 1600);
+      setTimeout(() => { btn.textContent = label; btn.classList.remove('done'); }, 1600);
+    });
+  });
+
+  // 스크롤 위치에 맞춰 상단 메뉴 강조
+  const links = [...document.querySelectorAll('.nav li a')];
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id));
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  links.forEach(a => observer.observe(document.querySelector(a.getAttribute('href'))));
+</script>
+</body>
+</html>
